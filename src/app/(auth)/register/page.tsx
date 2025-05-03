@@ -54,7 +54,7 @@ const Register: FC = () => {
   };
   return (
     <section className="grid grid-cols-2 h-screen">
-      <div className={"h-screen bg-[#a78cde]"}>
+      <div className={"h-screen bg-purple-postit]"}>
         <Image
           src="/images/login-image.jpg"
           alt="login-page"
