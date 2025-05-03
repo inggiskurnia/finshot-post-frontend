@@ -1,5 +1,5 @@
 export interface Post {
-  postId: number;
+  userId: number;
   userName: string;
   userProfilePictureUrl?: string;
   title: string;

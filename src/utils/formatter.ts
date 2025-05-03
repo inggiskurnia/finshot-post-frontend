@@ -33,3 +33,9 @@ export const slugify = (title: string): string => {
 export const deslugify = (slug: string) => {
   return slug.trim().replace("-", " ");
 };
+
+export const containsKorean = (text: string) => {
+  const koreanRegex =
+    /[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F\uA960-\uA97F\uD7B0-\uD7FF]/;
+  return koreanRegex.test(text);
+};

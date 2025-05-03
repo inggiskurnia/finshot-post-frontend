@@ -13,7 +13,7 @@ const Navbar: FC = () => {
         <AvatarComponent userName={"Inggis Kurnia Trisiawan"} />
 
         <p className={"font-semibold md:block hidden"}>
-          Welcome, Inggis Kurnia Trisiawan!
+          Welcome, Inggis Kurnia Trisiawan !
         </p>
       </div>
       <div>

@@ -5,7 +5,7 @@ import { Clock, Eye } from "lucide-react";
 import Link from "next/link";
 import AvatarComponent from "@/components/common/AvatarComponent";
 
-const CardBoard: FC<Post> = ({
+const CardPost: FC<Post> = ({
   userName,
   userProfilePictureUrl,
   title,
@@ -51,4 +51,4 @@ const CardBoard: FC<Post> = ({
   );
 };
 
-export default CardBoard;
+export default CardPost;
