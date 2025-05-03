@@ -1,10 +1,22 @@
-import { FC } from "react";
+"use client";
+
+import { FC, useState } from "react";
 import CardPost from "@/components/post/CardPost";
 import { dateTimeFormatter } from "@/utils/formatter";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { getPaginatedAllPost } from "@/api/post/getPosts";
+import Pagination from "@/components/common/Pagination";
 
 const Home: FC = () => {
+  const [page, setPage] = useState<number>(0);
+
+  const { data } = useQuery({
+    queryKey: ["paginated-posts", page],
+    queryFn: () => getPaginatedAllPost({ page, limit: 10 }),
+  });
+
   return (
     <>
       <div
@@ -19,20 +31,29 @@ const Home: FC = () => {
           <Button>New Post</Button>
         </Link>
       </div>
-      <div>
-        {Array.from({ length: 5 }, (_, index) => (
+      <div className={"flex flex-col"}>
+        {data?.data.content.map((post) => (
           <CardPost
-            key={index}
-            userId={1}
-            userName={"Inggis Kurnia"}
-            title={"Lorem ipsum dolor sit amet, consectetur adipiscing elit"}
-            body={
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
-            }
-            createdAt={dateTimeFormatter("2025-05-01T07:14:11.490684Z")}
-            totalViews={2}
+            key={post.postId}
+            postId={post.postId}
+            author={post.author}
+            title={post.title}
+            body={post.body}
+            createdAt={dateTimeFormatter(post.createdAt)}
+            totalViews={post.totalViews}
           />
         ))}
+      </div>
+      <div className={"pb-10"}>
+        {data?.data && (
+          <Pagination
+            currentPage={data?.data.currentPage}
+            totalPages={data?.data.totalPages}
+            onPageChange={setPage}
+            hasNext={data?.data.hasNext}
+            hasPrev={data?.data.hasPrev}
+          />
+        )}
       </div>
     </>
   );

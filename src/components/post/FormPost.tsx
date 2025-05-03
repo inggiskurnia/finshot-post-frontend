@@ -16,9 +16,8 @@ const FormPost: FC<FormPostProps> = ({ props }) => {
   const { postSlug } = useParams();
 
   const initialValues: Post = {
-    userId: props?.userId ?? 0,
-    userName: props?.userName ?? "",
-    userProfilePictureUrl: props?.userProfilePictureUrl ?? "",
+    postId: props?.postId ?? 0,
+    author: props?.author ?? "",
     title: props?.title ?? "",
     body: props?.body ?? "",
     totalViews: props?.totalViews ?? 0,

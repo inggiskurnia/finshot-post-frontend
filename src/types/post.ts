@@ -1,9 +1,10 @@
 export interface Post {
-  userId: number;
-  userName: string;
+  postId: number;
+  author: string;
   userProfilePictureUrl?: string;
   title: string;
   body: string;
-  createdAt: string;
   totalViews: number;
+  createdAt: string;
+  updatedAt?: string;
 }

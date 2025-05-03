@@ -10,7 +10,7 @@ const Navbar: FC = () => {
       }
     >
       <div className={"flex gap-4 items-center"}>
-        <AvatarComponent userName={"Inggis Kurnia Trisiawan"} />
+        <AvatarComponent author={"Inggis Kurnia Trisiawan"} />
 
         <p className={"font-semibold md:block hidden"}>
           Welcome, Inggis Kurnia Trisiawan !

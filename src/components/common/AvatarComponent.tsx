@@ -1,31 +1,20 @@
 import { FC } from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { getInitials } from "@/utils/formatter";
 
 interface AvatarComponentProps {
-  userName: string;
-  profilePictureUrl?: string;
+  author: string;
   width?: number;
   height?: number;
 }
 const AvatarComponent: FC<AvatarComponentProps> = ({
-  userName,
-  profilePictureUrl,
+  author,
   width = 7,
   height = 7,
 }) => {
   return (
     <div className={"bg-gray-200 rounded-full text-gray-700"}>
-      {profilePictureUrl && (
-        <Image
-          src={userName}
-          alt={profilePictureUrl}
-          width={width}
-          height={height}
-        />
-      )}
-      {!profilePictureUrl && userName && (
+      {author && (
         <div
           className={cn(
             `w-${width}`,
@@ -33,7 +22,7 @@ const AvatarComponent: FC<AvatarComponentProps> = ({
             "flex items-center justify-center border-2 rounded-full",
           )}
         >
-          {getInitials(userName)}
+          {getInitials(author)}
         </div>
       )}
     </div>
