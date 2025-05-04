@@ -1,12 +1,14 @@
 "use client";
 
 import { FC } from "react";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { ErrorMessage, Field, Form, Formik, FormikHelpers } from "formik";
 import { Button } from "@/components/ui/button";
 import * as Yup from "yup";
-import { Post } from "@/types/post";
+import { Post, PostForm } from "@/types/post";
 import { containsKorean } from "@/utils/formatter";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { createNewPost, updatePost } from "@/api/post/postPost";
+import { toast } from "@/hooks/use-toast";
 
 interface FormPostProps {
   props?: Post;
@@ -14,14 +16,11 @@ interface FormPostProps {
 
 const FormPost: FC<FormPostProps> = ({ props }) => {
   const { postSlug } = useParams();
+  const router = useRouter();
 
-  const initialValues: Post = {
-    postId: props?.postId ?? 0,
-    author: props?.author ?? "",
+  const initialValues: PostForm = {
     title: props?.title ?? "",
     body: props?.body ?? "",
-    totalViews: props?.totalViews ?? 0,
-    createdAt: props?.createdAt ?? "",
   };
 
   const validationSchema = Yup.object({
@@ -39,12 +38,46 @@ const FormPost: FC<FormPostProps> = ({ props }) => {
     body: Yup.string().min(10, "Minimum 10 characters").required("Required"),
   });
 
-  const handleFormSubmit = () => {
+  const handleFormSubmit = (
+    values: PostForm,
+    { setSubmitting }: FormikHelpers<PostForm>,
+  ) => {
     if (postSlug) {
-      console.log("test edit");
+      updatePost(String(postSlug), values)
+        .then(() => {
+          toast({
+            title: "Update Post Success",
+            duration: 5000,
+          });
+          router.push("/");
+        })
+        .catch(() => {
+          toast({
+            title: "Update Post Success",
+            duration: 5000,
+            variant: "destructive",
+          });
+        })
+        .finally(() => setSubmitting(false));
     } else {
-      console.log("test post");
+      createNewPost(values)
+        .then(() => {
+          toast({
+            title: "Create New Post Success",
+            duration: 5000,
+          });
+          router.push("/");
+        })
+        .catch(() => {
+          toast({
+            title: "Failed to create new post",
+            duration: 5000,
+            variant: "destructive",
+          });
+        })
+        .finally(() => setSubmitting(false));
     }
+    setSubmitting(false);
   };
 
   return (
@@ -57,7 +90,9 @@ const FormPost: FC<FormPostProps> = ({ props }) => {
         {({ isSubmitting }) => (
           <Form className="flex flex-col gap-6  px-10 py-5">
             <div className={"border-b-2 border-b-slate-200 py-5"}>
-              <span className="text-2xl font-bold">Create New Post</span>
+              <span className="text-2xl font-bold">
+                {postSlug ? "Edit Post" : "Create New Post"}
+              </span>
             </div>
 
             <div className="flex flex-col space-y-2">
@@ -106,7 +141,13 @@ const FormPost: FC<FormPostProps> = ({ props }) => {
                 className="mt-6 font-semibold w-32"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Posting..." : "Post"}
+                {postSlug
+                  ? isSubmitting
+                    ? "Editing..."
+                    : "Edit"
+                  : isSubmitting
+                    ? "Posting..."
+                    : "Post"}
               </Button>
             </div>
           </Form>

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { LogOut } from "lucide-react";
 import AvatarComponent from "@/components/common/AvatarComponent";
+import Link from "next/link";
 
 const Navbar: FC = () => {
   return (
@@ -9,13 +10,16 @@ const Navbar: FC = () => {
         "sticky top-0 z-[20] flex justify-between bg-gradient-to-r from-purple-postit  to-white text-white  md:px-40 px-10 py-4"
       }
     >
-      <div className={"flex gap-4 items-center"}>
-        <AvatarComponent author={"Inggis Kurnia Trisiawan"} />
+      <Link href={"/"}>
+        <div className={"flex gap-4 items-center"}>
+          <AvatarComponent author={"Inggis Kurnia Trisiawan"} />
 
-        <p className={"font-semibold md:block hidden"}>
-          Welcome, Inggis Kurnia Trisiawan !
-        </p>
-      </div>
+          <p className={"font-semibold md:block hidden"}>
+            Welcome, Inggis Kurnia Trisiawan !
+          </p>
+        </div>
+      </Link>
+
       <div>
         <button
           className={

@@ -133,12 +133,17 @@ const handler = NextAuth({
         }
 
         try {
-          console.log("Attempting token refresh...");
+          console.log("Attempting token refresh...", token.refreshToken);
 
           const responseRefresh = await axios.post<ApiResponse<LoginResponse>>(
             refresh_url,
             {
               refreshToken: token.refreshToken,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
             },
           );
 

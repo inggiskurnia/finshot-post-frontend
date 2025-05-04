@@ -8,3 +8,18 @@ export interface Post {
   createdAt: string;
   updatedAt?: string;
 }
+
+export interface PostForm {
+  title: string;
+  body: string;
+}
+
+export interface PostResponse {
+  postId: number;
+  title: string;
+  body: string;
+  totalViews: number;
+  author: string;
+  createdAt: string;
+  updatedAt: string;
+}
