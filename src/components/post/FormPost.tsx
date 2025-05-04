@@ -53,7 +53,7 @@ const FormPost: FC<FormPostProps> = ({ props }) => {
         })
         .catch(() => {
           toast({
-            title: "Update Post Success",
+            title: "Error updating post",
             duration: 5000,
             variant: "destructive",
           });
