@@ -1,7 +1,7 @@
 "use client";
 
 import { FC, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { getPostBySlug } from "@/api/post/getPosts";
 import { dateTimeFormatter } from "@/utils/formatter";
@@ -10,11 +10,13 @@ import { toast } from "@/hooks/use-toast";
 import { useSession } from "next-auth/react";
 import { SquarePen, Trash } from "lucide-react";
 import Link from "next/link";
+import { deletePostBySlug } from "@/api/post/deletePosts";
 
 const PostPage: FC = () => {
   const { postSlug } = useParams();
   const [updateViewsState, setUpdateViewsState] = useState(false);
   const session = useSession();
+  const router = useRouter();
 
   const { data } = useQuery({
     queryKey: ["post-slug", updateViewsState],
@@ -39,6 +41,27 @@ const PostPage: FC = () => {
     console.log(session);
   }, []);
 
+  const handleDeletePost = () => {
+    const confirmResult = confirm("Are you sure want to delete post ?");
+    if (confirmResult) {
+      deletePostBySlug(String(postSlug))
+        .then(() => {
+          toast({
+            title: "Successfully delete post !",
+            duration: 5000,
+          });
+          router.push("/");
+        })
+        .catch(() => {
+          toast({
+            title: "Error deleting post",
+            variant: "destructive",
+            duration: 5000,
+          });
+        });
+    }
+  };
+
   return (
     <section className="flex flex-col gap-6  px-10 py-5">
       {data?.data && (
@@ -56,7 +79,11 @@ const PostPage: FC = () => {
             <p>Total views : {data?.data.totalViews}</p>
           </div>
           <div className={"flex gap-4"}>
-            <Trash size={20} className={"text-red-500 cursor-pointer"} />
+            <Trash
+              size={20}
+              className={"text-red-500 cursor-pointer"}
+              onClick={handleDeletePost}
+            />
             <Link href={`/post/form/${postSlug}`}>
               <SquarePen
                 size={20}
