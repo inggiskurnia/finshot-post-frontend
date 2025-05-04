@@ -8,8 +8,8 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { loginUser } from "@/api/auth/postAuth";
 import { toast } from "@/hooks/use-toast";
+import { signIn } from "next-auth/react";
 
 interface LoginForm {
   email: string;
@@ -34,12 +34,17 @@ const LoginPage: FC = () => {
     values: LoginForm,
     { setSubmitting }: FormikHelpers<LoginForm>,
   ) => {
-    loginUser(values)
+    signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+    })
       .then(() => {
         toast({
           title: "Login Success !",
           duration: 5000,
         });
+
         router.push("/");
       })
       .catch(() => {

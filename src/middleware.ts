@@ -1,16 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@/auth";
+import { getToken } from "next-auth/jwt";
 
 const PUBLIC_PATHS = ["/login", "/register", "/"];
 const PROTECTED_PATHS = ["/post", "/post/*", "/user", "/user/*"];
 
-async function getSession() {
-  return await auth();
-}
-
 function isPublicPath(pathname: string) {
-  return PUBLIC_PATHS.some((path) => pathname.startsWith(path));
+  if (pathname === "/") return true;
+  return PUBLIC_PATHS.some((path) => path !== "/" && pathname.startsWith(path));
 }
 
 function isProtectedPath(pathname: string) {
@@ -18,7 +15,10 @@ function isProtectedPath(pathname: string) {
 }
 
 export async function middleware(request: NextRequest) {
-  const session = await getSession();
+  const token = await getToken({
+    req: request,
+    secret: process.env.PUBLIC_KEY,
+  });
   const { pathname } = request.nextUrl;
 
   if (isPublicPath(pathname)) {
@@ -26,8 +26,10 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isProtectedPath(pathname)) {
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url));
+    if (!token) {
+      console.log("No token found, redirecting to login.");
+      const loginUrl = new URL("/login", request.url);
+      return NextResponse.redirect(loginUrl);
     }
   }
 
