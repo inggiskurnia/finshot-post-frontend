@@ -5,17 +5,6 @@ import { getSession } from "next-auth/react";
 
 const authUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_AUTH}`;
 
-export const loginUser = async (
-  body: LoginForm,
-): Promise<ApiResponse<LoginResponse>> => {
-  const response = await axios.post<ApiResponse<LoginResponse>>(
-    `${authUrl}/login`,
-    body,
-  );
-
-  return response.data;
-};
-
 export const logoutUser = async (): Promise<ApiResponse<LoginResponse>> => {
   const session = await getSession();
   const accessToken = session?.accessToken;
@@ -34,6 +23,35 @@ export const logoutUser = async (): Promise<ApiResponse<LoginResponse>> => {
       },
     },
   );
+
+  return response.data;
+};
+
+export interface Credentials {
+  email: string;
+  password: string;
+}
+
+export const loginUser = async ({
+  email,
+  password,
+}: Credentials): Promise<ApiResponse<LoginResponse>> => {
+  const response = await axios.post<ApiResponse<LoginResponse>>(
+    `${authUrl}/login`,
+    {
+      email,
+      password,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  if (!response.data.success) {
+    throw new Error(response.data.message);
+  }
 
   return response.data;
 };

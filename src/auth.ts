@@ -5,6 +5,7 @@ import { LoginResponse } from "@/types/auth";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { jwtDecode } from "jwt-decode";
+import { loginUser } from "@/api/auth/postAuth";
 
 const login_url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_AUTH}${process.env.NEXT_PUBLIC_LOGIN}`;
 const refresh_url = `${process.env.NEXT_PUBLIC_BACKEND_URL}${process.env.NEXT_PUBLIC_AUTH}${process.env.NEXT_PUBLIC_REFRESH}`;
@@ -42,7 +43,7 @@ export const { handlers } = NextAuth({
   },
   session: {
     strategy: "jwt",
-    maxAge: 60 * 60 * 1,
+    maxAge: 60 * 60,
   },
   secret: process.env.PUBLIC_KEY,
   debug: process.env.NODE_ENV === "development",
@@ -59,25 +60,10 @@ export const { handlers } = NextAuth({
           return null;
         }
 
-        const response = await axios.post<ApiResponse<LoginResponse>>(
-          login_url,
-          {
-            email: credentials.email,
-            password: credentials.password,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-
-        if (!response.data.success) {
-          console.error("Login failed:", response.data.message);
-          return null;
-        }
-        const loginData = response.data.data;
-        console.log(loginData);
+        const loginData = await loginUser({
+          email: credentials.email,
+          password: credentials.password,
+        });
 
         // Verify the JWT signature
         const secret = process.env.PUBLIC_KEY;
@@ -86,7 +72,9 @@ export const { handlers } = NextAuth({
           return null;
         }
         try {
-          jwt.verify(loginData.accessToken, secret, { algorithms: ["RS256"] });
+          jwt.verify(loginData.data.accessToken, secret, {
+            algorithms: ["RS256"],
+          });
           console.log("JWT verification successful");
         } catch (err) {
           console.error("JWT verification failed:", err);
@@ -95,8 +83,8 @@ export const { handlers } = NextAuth({
 
         return {
           id: credentials.email,
-          accessToken: loginData.accessToken,
-          refreshToken: loginData.refreshToken,
+          accessToken: loginData.data.accessToken,
+          refreshToken: loginData.data.refreshToken,
         };
       },
     }),
