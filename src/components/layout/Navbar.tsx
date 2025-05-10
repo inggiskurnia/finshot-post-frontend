@@ -2,7 +2,6 @@
 
 import { FC } from "react";
 import { LogIn, LogOut } from "lucide-react";
-import AvatarComponent from "@/components/common/AvatarComponent";
 import Link from "next/link";
 import { signOut, useSession } from "next-auth/react";
 import { logoutUser } from "@/api/auth/postAuth";
@@ -37,11 +36,7 @@ const Navbar: FC = () => {
     >
       <Link href={"/"}>
         <div className={"flex gap-4 items-center"}>
-          <AvatarComponent author={"Inggis Kurnia Trisiawan"} />
-
-          <p className={"font-semibold md:block hidden"}>
-            Welcome, Inggis Kurnia Trisiawan !
-          </p>
+          <p className={"font-semibold md:block hidden"}>Welcome !</p>
         </div>
       </Link>
 
